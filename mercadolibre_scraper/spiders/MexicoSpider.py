@@ -44,4 +44,4 @@ class MLMexicoSpider(scrapy.Spider):
 
         next_url = response.selector.xpath('//li[@class="pagination__next"]/a/@href').extract_first()
         if next_url:
-            yield scrapy.Request(url=next_url, callback=self.parse, meta=response.meta, headers=response.headers)
+            yield scrapy.Request(url=next_url, callback=self.parse, meta=response.meta, headers=self.details_headers)
