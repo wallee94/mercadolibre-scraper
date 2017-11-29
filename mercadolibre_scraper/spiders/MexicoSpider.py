@@ -10,12 +10,8 @@ class MLMexicoSpider(scrapy.Spider):
     def __init__(self, name=None, **kwargs):
         super().__init__(name, **kwargs)
 
-        # binary_string = pkgutil.get_data("mercadolibre", "resources/key_words.txt")
-        # self.key_words = binary_string.decode("utf-8").split("\n")
-        self.key_words = []
-        with open("key_words.txt", "r") as f:
-            for line in f:
-                self.key_words.append(line[:-1])
+        binary_string = pkgutil.get_data("mercadolibre_scraper", "resources/key_words.txt")
+        self.key_words = binary_string.decode("utf-8").split("\n")
 
         self.details_headers = {
             "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0",

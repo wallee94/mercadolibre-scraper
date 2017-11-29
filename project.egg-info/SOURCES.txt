@@ -1,0 +1,15 @@
+setup.py
+mercadolibre_scraper/__init__.py
+mercadolibre_scraper/items.py
+mercadolibre_scraper/middlewares.py
+mercadolibre_scraper/pipelines.py
+mercadolibre_scraper/settings.py
+mercadolibre_scraper/resources/key_words.txt
+mercadolibre_scraper/spiders/MexicoSpider.py
+mercadolibre_scraper/spiders/__init__.py
+project.egg-info/PKG-INFO
+project.egg-info/SOURCES.txt
+project.egg-info/dependency_links.txt
+project.egg-info/entry_points.txt
+project.egg-info/top_level.txt
+project.egg-info/zip-safe
