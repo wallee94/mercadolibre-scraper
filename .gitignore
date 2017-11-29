@@ -1,3 +1,4 @@
+*.jl
 *.pyc
 **/__pycache__
 **/.idea

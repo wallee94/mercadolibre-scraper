@@ -1,6 +1,7 @@
 import pkgutil
 
 import scrapy
+from datetime import datetime
 
 
 class MLMexicoSpider(scrapy.Spider):
@@ -22,10 +23,13 @@ class MLMexicoSpider(scrapy.Spider):
             "Connection": "keep-alive"
         }
 
+        self.today_date = str(datetime.now().date())
+
     def start_requests(self):
-        urls = ["https://listado.mercadolibre.com.mx/" + key_word for key_word in self.key_words]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+        for key_word in self.key_words:
+            yield scrapy.Request(url="https://listado.mercadolibre.com.mx/" + key_word,
+                                 callback=self.parse,
+                                 meta={"key_word": key_word})
 
     def parse(self, response):
         lis = response.selector.xpath('//ol[@id="searchResults"]/li')
@@ -33,8 +37,14 @@ class MLMexicoSpider(scrapy.Spider):
             data = {
                 "id": li.xpath('./div/@id').extract_first(),
                 "url": li.xpath('.//a/@href').extract_first(),
-                "title": li.xpath('.//h2/a/span/text()').extract_first(),
+                "title": li.xpath('.//h2//span/text()').extract_first().strip(),
                 "price": li.xpath('.//*[@class="price-fraction"]/text()').extract_first(),
+                "key_word": response.meta.get("key_word"),
+                "date": self.today_date
             }
 
             yield data
+
+        next_url = response.selector.xpath('//li[@class="pagination__next"]/a/@href').extract_first()
+        if next_url:
+            yield scrapy.Request(url=next_url, callback=self.parse, meta=response.meta)
