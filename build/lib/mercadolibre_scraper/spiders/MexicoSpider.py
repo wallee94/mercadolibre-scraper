@@ -6,6 +6,7 @@ from datetime import datetime
 
 class MLMexicoSpider(scrapy.Spider):
     name = "mercadolibre.com.mx"
+    download_delay = 5
 
     def __init__(self, name=None, **kwargs):
         super().__init__(name, **kwargs)
@@ -25,7 +26,8 @@ class MLMexicoSpider(scrapy.Spider):
         for key_word in self.key_words:
             yield scrapy.Request(url="https://listado.mercadolibre.com.mx/" + key_word,
                                  callback=self.parse,
-                                 meta={"key_word": key_word})
+                                 meta={"key_word": key_word},
+								 headers=self.details_headers)
 
     def parse(self, response):
         lis = response.selector.xpath('//ol[@id="searchResults"]/li')
@@ -43,4 +45,4 @@ class MLMexicoSpider(scrapy.Spider):
 
         next_url = response.selector.xpath('//li[@class="pagination__next"]/a/@href').extract_first()
         if next_url:
-            yield scrapy.Request(url=next_url, callback=self.parse, meta=response.meta)
+            yield scrapy.Request(url=next_url, callback=self.parse, meta=response.meta, headers=self.details_headers)
