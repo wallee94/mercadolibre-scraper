@@ -46,6 +46,6 @@ class MLMexicoSpider(scrapy.Spider):
             yield data
 
         next_url = response.selector.xpath('//li[@class="pagination__next"]/a/@href').extract_first()
-        if next_url and response.meta["page"] < 10:
+        if next_url and response.meta["page"] < 5:
             response.meta["page"] += 1
             yield scrapy.Request(url=next_url, callback=self.parse, meta=response.meta, headers=self.headers)
