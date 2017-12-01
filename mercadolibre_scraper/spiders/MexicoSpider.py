@@ -23,10 +23,15 @@ class MLMexicoSpider(scrapy.Spider):
 
     def start_requests(self):
         for key_word in self.key_words:
-            yield scrapy.Request(url="https://listado.mercadolibre.com.mx/" + key_word,
+            yield scrapy.Request(url="https://listado.mercadolibre.com.mx/" + key_word + "_ItemTypeID_N",
                                  callback=self.parse,
-                                 meta={"key_word": key_word, "page": 1, "last_position": 0},
+                                 meta={"key_word": key_word, "page": 1, "last_position": 0, "is_new": True},
                                  headers=self.headers)
+            yield scrapy.Request(url="https://listado.mercadolibre.com.mx/usados/" + key_word,
+                                 callback=self.parse,
+                                 meta={"key_word": key_word, "page": 1, "last_position": 0, "is_new": False},
+                                 headers=self.headers)					 
+								 
 
     def parse(self, response):
         lis = response.selector.xpath('//ol[@id="searchResults"]/li')
@@ -40,7 +45,8 @@ class MLMexicoSpider(scrapy.Spider):
                 "key_word": response.meta.get("key_word"),
                 "date": self.today_date,
                 "position": response.meta.get("last_position"),
-                "page": response.meta.get("page")
+                "page": response.meta.get("page"),
+                "is_new": response.meta.get("is_new")
             }
 
             yield data
