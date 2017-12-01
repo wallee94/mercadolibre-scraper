@@ -1775,7 +1775,6 @@ chedraui-selecto
 chia-mia
 chicco
 chinese-laundry
-cima
 cisco
 citisalud
 citizen
@@ -2165,7 +2164,6 @@ race-chip
 rack--pack
 radiadores-polar
 ramaty
-rancho
 razer
 rca
 redlemon
