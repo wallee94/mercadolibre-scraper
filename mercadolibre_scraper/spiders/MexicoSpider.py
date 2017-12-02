@@ -1,5 +1,6 @@
 import pkgutil
 
+import re
 import scrapy
 from datetime import datetime
 
@@ -23,6 +24,7 @@ class MLMexicoSpider(scrapy.Spider):
 
     def start_requests(self):
         for key_word in self.key_words:
+            key_word = re.sub("\r+", "", key_word)
             yield scrapy.Request(url="https://listado.mercadolibre.com.mx/" + key_word + "_ItemTypeID_N",
                                  callback=self.parse,
                                  meta={"key_word": key_word, "page": 1, "last_position": 0, "is_new": True},
@@ -30,8 +32,7 @@ class MLMexicoSpider(scrapy.Spider):
             yield scrapy.Request(url="https://listado.mercadolibre.com.mx/usados/" + key_word,
                                  callback=self.parse,
                                  meta={"key_word": key_word, "page": 1, "last_position": 0, "is_new": False},
-                                 headers=self.headers)					 
-								 
+                                 headers=self.headers)
 
     def parse(self, response):
         lis = response.selector.xpath('//ol[@id="searchResults"]/li')
