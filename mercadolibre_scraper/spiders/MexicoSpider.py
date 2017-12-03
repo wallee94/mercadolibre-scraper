@@ -41,7 +41,7 @@ class MLMexicoSpider(scrapy.Spider):
             data = {
                 "id": li.xpath('./div/@id').extract_first(),
                 "url": li.xpath('.//a/@href').extract_first(),
-                "title": li.xpath('.//h2//span/text()').extract_first().strip(),
+                "title": li.xpath('.//h2//span/text()').extract_first(),
                 "price": li.xpath('.//*[@class="price-fraction"]/text()').extract_first(),
                 "key_word": response.meta.get("key_word"),
                 "date": self.today_date,
@@ -49,6 +49,11 @@ class MLMexicoSpider(scrapy.Spider):
                 "page": response.meta.get("page"),
                 "is_new": response.meta.get("is_new")
             }
+
+            if not data["title"]:
+                return
+            else:
+                data["title"] = data["title"].strip()
 
             yield data
 
