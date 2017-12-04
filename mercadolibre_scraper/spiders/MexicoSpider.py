@@ -38,9 +38,10 @@ class MLMexicoSpider(scrapy.Spider):
                 "https://listado.mercadolibre.com.mx/usados/" + key_word
             ]
             for url in urls:
+                is_new = "/usados/" not in url
                 yield scrapy.Request(url=url,
                                  callback=self.parse,
-                                 meta={"key_word": key_word, "page": 1, "last_position": 0, "is_new": True},
+                                 meta={"key_word": key_word, "page": 1, "last_position": 0, "is_new": is_new},
                                  headers=self.headers)
 
     def parse(self, response):
