@@ -3,6 +3,7 @@ import pkgutil
 import re
 import scrapy
 from datetime import datetime
+import requests
 
 
 class MLMexicoSpider(scrapy.Spider):
@@ -21,6 +22,15 @@ class MLMexicoSpider(scrapy.Spider):
         }
 
         self.today_date = str(datetime.now().date())
+
+        params = {
+            "currencies": "USD,MXN",
+            "format": "1"
+        }
+        acces_key = "701ab850ba9a3305ad7843cc055bd2c2"
+        r = requests.get("http://www.apilayer.net/api/live?access_key=" + acces_key, params=params)
+        json_response = r.json()
+        self.usd_to_mxn = float(json_response.get("USDMXN"))
 
     def start_requests(self):
         for key_word in self.key_words:
@@ -54,6 +64,11 @@ class MLMexicoSpider(scrapy.Spider):
                 return
             else:
                 data["title"] = data["title"].strip()
+
+            usd_symbol = li.xpath('.//*[@class="price-symbol"]/text()').extract_first(),
+            if usd_symbol is not None:
+                if "U$S" == usd_symbol:
+                    data["price"] = str(float(data["price"]) * self.usd_to_mxn)
 
             yield data
 
