@@ -18,7 +18,7 @@ class MLMexicoSpider(scrapy.Spider):
         if response.status_code == 200:
             self.key_words = response.json().get("keywords", [])
         else:
-            binary_string = pkgutil.get_data("mercadolibre_scraper", "resources/key_words.txt")
+            binary_string = pkgutil.get_data("mercadolibre_scraper", "resources/key_words_api.txt")
             self.key_words = binary_string.decode("utf-8").split("\n")
 
         self.headers = {
@@ -52,7 +52,7 @@ class MLMexicoSpider(scrapy.Spider):
                 yield data
 
         paging = response_json.get("paging")
-        if paging and paging.get("total") - paging.get("offset") < paging.get("limit"):
+        if paging and 0 < paging.get("total") - paging.get("offset") < paging.get("limit"):
             url = response.meta.get("base_url") + "&offset=" + str(paging.get("offset") + paging.get("limit"))
             yield scrapy.Request(url=url, headers=self.headers, meta=response.meta)
 
