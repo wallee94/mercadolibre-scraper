@@ -5,6 +5,7 @@ mercadolibre_scraper/middlewares.py
 mercadolibre_scraper/pipelines.py
 mercadolibre_scraper/settings.py
 mercadolibre_scraper/resources/key_words.txt
+mercadolibre_scraper/resources/key_words_api.txt
 mercadolibre_scraper/spiders/ApiMexicoSpider.py
 mercadolibre_scraper/spiders/MexicoSpider.py
 mercadolibre_scraper/spiders/__init__.py

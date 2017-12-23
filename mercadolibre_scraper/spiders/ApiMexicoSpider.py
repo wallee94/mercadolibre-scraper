@@ -52,7 +52,7 @@ class MLMexicoSpider(scrapy.Spider):
                 yield data
 
         paging = response_json.get("paging")
-        if paging and 0 < paging.get("total") - paging.get("offset") < paging.get("limit"):
+        if paging and 0 < paging.get("limit") < paging.get("total") - paging.get("offset"):
             url = response.meta.get("base_url") + "&offset=" + str(paging.get("offset") + paging.get("limit"))
             yield scrapy.Request(url=url, headers=self.headers, meta=response.meta)
 
