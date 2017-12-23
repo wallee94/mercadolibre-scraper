@@ -13,8 +13,8 @@ class MLMexicoSpider(scrapy.Spider):
     def __init__(self, name=None, **kwargs):
         super().__init__(name, **kwargs)
 
-        response = requests.get("http://localhost:8000/api/tracking/keywords/",
-                                headers={"Authorization": "Token 3192fad257faee9616fd11c791c4f790f0373013"})
+        response = requests.get("https://patopatoganso.com.mx/api/tracking/keywords/",
+                                headers={"Authorization": "Token ac52865a0415790e775e2d2e41c86718ccb954d2"})
         if response.status_code == 200:
             self.key_words = response.json().get("keywords", [])
         else:
