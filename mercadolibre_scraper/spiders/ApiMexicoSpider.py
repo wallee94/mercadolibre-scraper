@@ -16,15 +16,22 @@ class MLMexicoSpider(scrapy.Spider):
         response = requests.get("https://patopatoganso.com.mx/api/tracking/keywords/",
                                 headers={"Authorization": "Token ac52865a0415790e775e2d2e41c86718ccb954d2"})
         if response.status_code == 200:
-            self.key_words = response.json().get("keywords", [])
+            self.key_words = response.json().get("keywords")
         else:
+            self.key_words = []
             binary_string = pkgutil.get_data("mercadolibre_scraper", "resources/key_words_api.txt")
-            self.key_words = binary_string.decode("utf-8").split("\n")
+
+            for keyword in binary_string.decode("utf-8").split("\n"):
+                self.key_words.append({
+                    "keyword": keyword,
+                    "offset": 1000
+                })
 
         self.headers = {
             "User-Agent": "curl/7.51.0",
             "Accept": "*/*",
         }
+
         self.today_date = str(datetime.now().date())
 
         # get actual USD/MXN rate
@@ -39,10 +46,15 @@ class MLMexicoSpider(scrapy.Spider):
 
     def start_requests(self):
         api_url = "https://api.mercadolibre.com/sites/MLM/search?limit=100"
-        for key_word in self.key_words:
-            key_word_escaped = re.sub("\s+", "%20", key_word)
+        for keyword_obj in self.key_words:
+            key_word_escaped = re.sub("\s+", "%20", keyword_obj.get("keyword"))
             url = api_url + "&q=" + key_word_escaped
-            yield scrapy.Request(url=url, headers=self.headers, meta={"key_word": key_word, "base_url": url})
+            meta = {
+                "key_word": keyword_obj.get("keyword"),
+                "base_url": url,
+                "offset": keyword_obj.get("offset")
+            }
+            yield scrapy.Request(url=url, headers=self.headers, meta=meta)
 
     def parse(self, response):
         response_json = json.loads(response.text)
@@ -55,7 +67,7 @@ class MLMexicoSpider(scrapy.Spider):
         limit = paging.get("limit")
         total = paging.get("total")
         offset = paging.get("offset")
-        if paging and 0 < limit < total - offset and offset < 1200:
+        if paging and 0 < limit < total - offset and offset < response.meta.get("offset"):
             url = response.meta.get("base_url") + "&offset=" + str(paging.get("offset") + paging.get("limit"))
             yield scrapy.Request(url=url, headers=self.headers, meta=response.meta)
 
